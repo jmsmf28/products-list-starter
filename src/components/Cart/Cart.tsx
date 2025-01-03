@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
-import { useApp } from "../Provider";
-import Dialog from "../Dialog";
-import Alert from "../Alert";
+import { useApp } from "../../utils/Provider";
+import Dialog from "../Dialog/Dialog";
+import Alert from "../Alert/Alert";
+import styles from "./Cart.module.css";
+import Button from "../Button/Button";
 
 const Cart = () => {
-  const {
-    cart,
-    removeFromCart,
-    updateQuantity,
-    setHeaderText,
-  } = useApp();
+  const { cart, removeFromCart, updateQuantity, setHeaderText } = useApp();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isAlertVisible, setIsAlertVisible] = useState(false);
@@ -28,43 +25,24 @@ const Cart = () => {
   if (!isClient) return null; // Prevent SSR rendering
 
   return (
-    <main>
+    <main className={styles.cartContainer}>
       <h1>Cart</h1>
       {cart.length === 0 ? (
         <p>Your cart is empty!</p>
       ) : (
         <div>
           {cart.map((item: any) => (
-            <div
-              key={item.product.id}
-              className="cart-item"
-              style={{ marginBottom: "1rem" }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: "0.25rem",
-                }}
-              >
+            <div key={item.product.id} className={styles.cartItem}>
+              <div className={styles.cartItemHeader}>
                 <span style={{ fontWeight: "bold" }}>{item.product.title}</span>
                 <span style={{ fontWeight: "bold" }}>
                   ${item.product.price.toFixed(2)}
                 </span>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                >
+              <div className={styles.cartItemBody}>
+                <div className={styles.qtyContainer}>
                   <button
-                    className="qty-button"
+                    className={styles.qtyButton}
                     onClick={() =>
                       updateQuantity(item.product.id, item.quantity - 1)
                     }
@@ -74,7 +52,7 @@ const Cart = () => {
                   </button>
                   <span>{item.quantity}</span>
                   <button
-                    className="qty-button"
+                    className={styles.qtyButton}
                     onClick={() =>
                       updateQuantity(item.product.id, item.quantity + 1)
                     }
@@ -84,7 +62,7 @@ const Cart = () => {
                 </div>
 
                 <button
-                  className="remove-button"
+                  className={styles.removeButton}
                   onClick={() => removeFromCart(item.product.id)}
                 >
                   Remove
@@ -92,17 +70,14 @@ const Cart = () => {
               </div>
             </div>
           ))}
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <button
-              className="gradient-button"
+          <div className={styles.confirmButtonContainer}>
+            <Button
               onClick={() => {
                 setIsModalOpen(true);
                 setHeaderText("Confirm Order");
               }}
-              style={{ marginTop: "1rem" }}
-            >
-              Confirm Order
-            </button>
+              label={"Confirm Order"}
+            />
           </div>
         </div>
       )}

@@ -3,9 +3,11 @@ import {
   validateEmail,
   validateAddress,
   validateName,
-} from "../utils/validation";
-import { useApp } from "./Provider";
-import { DialogProps } from "../types/types";
+} from "../../utils/validation";
+import { useApp } from "../../utils/Provider";
+import { DialogProps } from "../../types/types";
+import styles from "./Dialogue.module.css"
+import Button from "../Button/Button";
 
 const Dialog = ({ isOpen, onClose, onSubmit }: DialogProps) => {
   const [formData, setFormData] = useState({
@@ -20,27 +22,29 @@ const Dialog = ({ isOpen, onClose, onSubmit }: DialogProps) => {
   }>({});
   const { setHeaderText } = useApp();
 
-  const validateField = (field: string, value: string) => {
-    let error;
+  const validateField = (field: keyof typeof formData, value: string) => {
     switch (field) {
       case "name":
-        if (!value) error = "Name is required";
-        else if (!validateName(value))
-          error = "Name should be at least 5 characters long";
-        break;
+        return !value
+          ? "Name is required"
+          : validateName(value)
+            ? ""
+            : "Name is too short";
       case "email":
-        if (!value) error = "Email is required";
-        else if (!validateEmail(value)) error = "Invalid email format";
-        break;
+        return !value
+          ? "Email is required"
+          : validateEmail(value)
+            ? ""
+            : "Invalid email format";
       case "address":
-        if (!value) error = "Address is required";
-        else if (!validateAddress(value))
-          error = "Address should be at least 5 characters long";
-        break;
+        return !value
+          ? "Address is required"
+          : validateAddress(value)
+            ? ""
+            : "Invalid address";
       default:
-        break;
+        return "";
     }
-    return error;
   };
 
   const handleBlur = (field: keyof typeof formData) => {
@@ -53,24 +57,21 @@ const Dialog = ({ isOpen, onClose, onSubmit }: DialogProps) => {
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const value = e.target.value;
       setFormData((prev) => ({ ...prev, [field]: value }));
-      if (errors[field]) {
-        setErrors((prev) => ({ ...prev, [field]: undefined }));
-      }
+      setErrors((prev) => ({ ...prev, [field]: validateField(field, value) }));
     };
 
   const handleSubmit = () => {
-    const validationErrors: typeof errors = {};
-    Object.keys(formData).forEach((field) => {
-      const error = validateField(
-        field,
-        formData[field as keyof typeof formData]
-      );
-      if (error) validationErrors[field as keyof typeof errors] = error;
-    });
+    const newErrors = Object.entries(formData).reduce(
+      (acc, [field, value]) => ({
+        ...acc,
+        [field]: validateField(field as keyof typeof formData, value),
+      }),
+      {} as typeof errors
+    );
 
-    setErrors(validationErrors);
+    setErrors(newErrors);
 
-    if (Object.keys(validationErrors).length === 0 && onSubmit) {
+    if (!Object.values(newErrors).some((err) => err) && onSubmit) {
       onSubmit(formData);
       setFormData({ name: "", email: "", address: "" });
       onClose();
@@ -81,11 +82,11 @@ const Dialog = ({ isOpen, onClose, onSubmit }: DialogProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <div className={styles.modalHeader}>
           <h3>Confirm your order</h3>
-          <button onClick={onClose} className="close-button">
+          <button onClick={onClose} className={styles.closeButton}>
             <span style={{ color: "#3f2b96", fontWeight: "bold" }}>X</span>
           </button>
         </div>
@@ -109,28 +110,13 @@ const Dialog = ({ isOpen, onClose, onSubmit }: DialogProps) => {
                 />
               )}
               {errors[field as keyof typeof errors] && (
-                <p
-                  className="error-text"
-                  style={{
-                    color: "red",
-                    fontSize: "0.8rem",
-                    marginTop: field !== "address" ? "-0.9rem" : "0.1rem",
-                  }}
-                >
+                <p className={styles.errorText}>
                   {errors[field as keyof typeof errors]}
                 </p>
               )}
             </>
           ))}
-          <div>
-            <button
-              className="gradient-button"
-              onClick={handleSubmit}
-              style={{ marginTop: "1rem" }}
-            >
-              Submit Order
-            </button>
-          </div>
+          <Button onClick={handleSubmit} label={"Submit Order"} />
         </div>
       </div>
     </div>

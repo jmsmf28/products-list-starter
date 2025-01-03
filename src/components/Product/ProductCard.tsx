@@ -1,5 +1,8 @@
+import Image from "next/image";
 import { Product } from "../../types/types";
-import { useApp } from "../Provider";
+import { useApp } from "../../utils/Provider";
+import styles from "./ProductCard.module.css";
+import Button from "../Button/Button";
 
 interface Props {
   product: Product;
@@ -9,34 +12,23 @@ const ProductCard = ({ product }: Props) => {
   const { addToCart } = useApp();
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        padding: "1rem",
-        background: "white",
-      }}
-    >
-      <img
-        src={product.thumbnail}
-        alt={product.title}
-        style={{
-          maxWidth: "100%",
-          height: "auto",
-          borderRadius: "4px",
-        }}
+    <div className={styles.productCard}>
+      <Image
+        src={product.thumbnail || "/placeholder.png"}
+        alt={product.title || "Product Image"}
+        width={200}
+        height={200}
+        className={styles.productThumbnail}
+        placeholder="blur"
+        blurDataURL="/placeholder.png"
       />
-      <h3>{product.title}</h3>
-      <div style={{display:'flex', justifyContent:'space-between'}}>
-      <p>${product.price.toFixed(2)}</p>
-      <button
-        className="gradient-button"
-        onClick={() => addToCart(product)}
-        style={{ marginTop: "1rem" }}
-      >
-        Add to Cart
-      </button>
+      <div className={styles.productInfo}>
+        <h3 className={styles.productTitle}>{product.title}</h3>
+        <p className={styles.productPrice}>
+          ${product.price?.toFixed(2) || "N/A"}
+        </p>
       </div>
+      <Button onClick={() => addToCart(product)} label={"Add to Cart"} />
     </div>
   );
 };

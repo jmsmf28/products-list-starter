@@ -1,0 +1,40 @@
+.productCard {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: transform 0.2s;
+}
+
+.productCard:hover {
+  transform: scale(1.02);
+}
+
+.productThumbnail {
+  border-radius: 4px;
+  width: 100%;
+  height: auto;
+}
+
+.productInfo {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.productTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  flex: 1;
+}
+
+.productPrice {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: green;
+  text-align: right;
+}

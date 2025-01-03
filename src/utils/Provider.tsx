@@ -1,35 +1,35 @@
-import { createContext, useContext, useState } from "react";
-import {AppContextType, CartItem, Product} from "../types/types";
+// File: /context/Provider.tsx
+import { createContext, useContext, useState, useCallback } from "react";
+import { AppContextType, CartItem, Product } from "../types/types";
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const Provider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [headerText, setHeaderText] = useState<string>("Product List");
+  const [headerText, setHeaderText] = useState("Product List");
 
-  const addToCart = (product: Product) => {
+  const addToCart = useCallback((product: Product) => {
     setCart((prev) => {
       const existingItem = prev.find((item) => item.product.id === product.id);
-      if (existingItem) {
-        return prev.map((item) =>
-          item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
-      return [...prev, { product, quantity: 1 }];
+      return existingItem
+        ? prev.map((item) =>
+            item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          )
+        : [...prev, { product, quantity: 1 }];
     });
-  };
+  }, []);
 
-  const removeFromCart = (id: number) => {
+  const removeFromCart = useCallback((id: number) => {
     setCart((prev) => prev.filter((item) => item.product.id !== id));
-  };
+  }, []);
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = useCallback((id: number, quantity: number) => {
     setCart((prev) =>
       prev.map((item) =>
         item.product.id === id ? { ...item, quantity: Math.max(quantity, 1) } : item
       )
     );
-  };
+  }, []);
 
   return (
     <AppContext.Provider
