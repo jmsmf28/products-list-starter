@@ -1,5 +1,5 @@
 import ProductList from "../components/Product/ProductList";
-import { Provider, useApp } from "../components/Provider";
+import { Provider, useApp } from "../utils/Provider";
 import Cart from "../components/Cart/Cart";
 import CartIcon from "../components/Cart/CartIcon";
 

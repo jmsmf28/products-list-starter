@@ -1,0 +1,11 @@
+.productList {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  
+  .errorMessage {
+    color: red;
+    font-weight: bold;
+  }
+  

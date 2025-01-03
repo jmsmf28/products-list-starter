@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchProducts } from "../../utils/api";
 import ProductCard from "./ProductCard";
 import { Product } from "../../types/types";
+import styles from "./ProductList.module.css"; // Import the CSS Module
 
 const ProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -21,17 +22,11 @@ const ProductList = () => {
   }, []);
 
   if (error) {
-    return <p>{error}</p>;
+    return <p className={styles.errorMessage}>{error}</p>;
   }
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
-        gap: "1rem",
-      }}
-    >
+    <div className={styles.productList}>
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
@@ -40,4 +35,3 @@ const ProductList = () => {
 };
 
 export default ProductList;
-
